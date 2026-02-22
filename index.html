@@ -1,461 +1,1093 @@
-<html lang="en" dir="ltr">
-
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohsen Koorani Maskan</title>
     <meta name="keywords"
         content="Mohsen Koorani Maskan, Mohsen Maskan, Mohsen Koorani, Mohsen K Maskan, Mohsen, Koorani, Maskan, Kevin" />
-    <script type="application/x-javascript">
-        addEventListener("load", function() {
-            setTimeout(hideURLbar, 0);
-        }, false);
-
-        function hideURLbar() {
-            window.scrollTo(0, 1);
+    <title>Mohsen Koorani Maskan | Senior Software Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: '#FF6B35',      // Orange
+                        secondary: '#00C853',    // Green
+                        accent: '#FF9100',       // Deep Orange
+                        dark: '#0a0a0f',
+                        darker: '#050508',
+                        card: '#13131f',
+                        orange: '#FF6B35',
+                        green: '#00C853',
+                        cyan: '#00D4FF',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glow: {
+                            'from': { boxShadow: '0 0 10px #FF6B35, 0 0 20px #FF6B35' },
+                            'to': { boxShadow: '0 0 20px #00C853, 0 0 30px #00C853' },
+                        }
+                    }
+                }
+            }
         }
     </script>
-    <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-    <link href="css/font-awesome.css" rel="stylesheet">
-    <link href="css/easy-responsive-tabs.css" rel='stylesheet' type='text/css' />
-    <link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
-    <link href="css/Fonts.css" rel="stylesheet">
+    <style>
+        body {
+            background: #0a0a0f;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: all;
+        }
+        
+        .glass-card {
+            background: rgba(19, 19, 31, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(255, 107, 53, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.1);
+        }
+        
+        .skill-node {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .skill-node:hover {
+            transform: scale(1.1);
+            filter: brightness(1.3);
+        }
+        
+        .timeline-line {
+            background: linear-gradient(to bottom, #FF6B35, #FF9100, #00C853);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #FF6B35 0%, #FF9100 50%, #00C853 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+            color: #FF6B35;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .orbit {
+            animation: orbit 20s linear infinite;
+        }
+        
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+        }
+        
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .skill-bar-fill {
+            transition: width 1.5s ease-out;
+        }
+        
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .glass-card:hover .particle {
+            opacity: 1;
+        }
+
+        /* Timeline Toggle Styles */
+        .tl-toggle {
+            background: transparent;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: #FF6B35;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .tl-toggle:hover {
+            background: rgba(255, 107, 53, 0.1);
+            border-color: #FF6B35;
+        }
+
+        .tl-achievements {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tl-achievements.show {
+            max-height: 500px;
+            padding-top: 1rem;
+        }
+
+        .tl-achievements li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .tl-achievements li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: #FF6B35;
+        }
+
+        .tl-period {
+            font-family: 'JetBrains Mono', monospace;
+            color: #FF6B35;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tl-role {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .tl-company {
+            color: #9ca3af;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
 </head>
+<body class="antialiased">
 
-<body>
-    <div class="banner" id="home">
-        <div class="container">
-            <div class="header">
-                <nav class="navbar navbar-default">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse"
-                            data-target="#bs-example-navbar-collapse-1">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <h1><a href="index.html"><span>W</span>elcome</a></h1>
+    <!-- Interactive Particle Network Background -->
+    <div id="canvas-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-card border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange to-green flex items-center justify-center font-bold text-white font-mono text-lg">
+                        MK
                     </div>
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="index.html" class="hvr-underline-from-center active">Home</a></li>
-                            <li><a href="#about" class="hvr-underline-from-center scroll">About</a></li>
-                        </ul>
-                    </div>
-                    <div class="clearfix"> </div>
-                </nav>
-            </div>
-            <div class="banner-text-w3layouts">
-                <h3>Hi, I'm</h3>
-                <h2>Mohsen Koorani Maskan</h2>
-                <a href="images/CV.pdf" download="Mohsen Koorani Maskan CV">Download CV</a>
+                    <span class="font-bold text-xl tracking-tight hidden sm:block">Mohsen<span class="text-orange">.dev</span></span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#about" class="text-gray-300 hover:text-orange transition-colors text-sm font-medium">About</a>
+                    <a href="#skills" class="text-gray-300 hover:text-orange transition-colors text-sm font-medium">Skills</a>
+                    <a href="#experience" class="text-gray-300 hover:text-orange transition-colors text-sm font-medium">Experience</a>
+                    <a href="#projects" class="text-gray-300 hover:text-orange transition-colors text-sm font-medium">Projects</a>
+                    <a href="#contact" class="text-gray-300 hover:text-orange transition-colors text-sm font-medium">Contact</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-white/5 transition-colors">
+                        <i class="fas fa-moon text-orange"></i>
+                    </button>
+                    
+                <a href="images/CV.pdf" download="Mohsen Koorani Maskan CV" download class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-orange/10 text-orange border border-orange/30 hover:bg-orange/20 transition-all text-sm font-medium">
+                        <i class="fas fa-download"></i>
+                        Resume
+                    </a>
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
             </div>
         </div>
-        <div>
-            <a href="#about" class="scroll my-scroll">
-                <img src="images/arr2.png" style="position: absolute; right: 2.5%;bottom: 5%;">
-            </a>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden glass-card border-t border-white/5">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-orange hover:bg-white/5">About</a>
+                <a href="#skills" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-orange hover:bg-white/5">Skills</a>
+                <a href="#experience" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-orange hover:bg-white/5">Experience</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-orange hover:bg-white/5">Contact</a>
+            </div>
         </div>
-    </div>
-    <div class="about-section middle-bg-img" id="about">
-        <div class="container">
-            <h4 class="title-top-w3">Something<span>|</span></h4>
-            <h5 class="title-main-w3ls">About Me</h5>
-            <div id="horizontalTab">
+    </nav>
 
-                <ul class="resp-tabs-list">
-                    <li>Personal</li>
-                    <li>Skills</li>
-                    <li>Education</li>
-                    <li>Experience</li>
-                </ul>
-                <div class="resp-tabs-container">
-
-                    <div class="tab1">
-                        <div class="col-md-10 about-left-w3layouts">
-                            <ul>
-                                <li><span>Date of birth</span>:1994</li>
-                                <li><span>Language</span>: Persian, English</li>
-                                <li><span>Expert in</span>: Back-End development</li>
-                                <li><span>Phone</span>: +98 910 988 3120</li>
-                                <li><span>Email</span>: <a
-                                        href="mailto:MKM.Koorani@outlook.com">MKM.Koorani@outlook.com</a></li>
-                                <li><span>Address</span>: Karaj, Alborz, Iran</li>
-                                <div class="download-botton ">
-                                    <a href="https://www.linkedin.com/in/ThisIsMohsenKM/">LinkedIn</a>
-                                </div>
-                            </ul>
-                            <div class="pos-grid-agileinfo">
-                                <img src="images/about.jpeg" class="img-responsive" alt="">
-                                <h5>Personal</h5>
-                            </div>
-                        </div>
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange/10 border border-orange/30 text-orange text-sm font-mono">
+                        <span class="w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+                        Available for Opportunities
                     </div>
-
-                    <div class="tab2">
-                        <div class="col-md-10 about-left-w3layouts">
-                            <div class="about-info-w3-agileits">
-                                <h6>Back-End Development</h6>
-                                <div class="clearfix"> </div>
-                                <p>.NET Framework/Core, Entity Framework/Core, Dapper, MVC, Web API, Microservices,
-                                    Clean Architecture, Onion Architecture, Domain-Driven Design (DDD), Behavior-Driven
-                                    Design (BDD)</p>
-                            </div>
-                            <div class="about-info-w3-agileits mid-bar-agileits-w3layouts">
-                                <h6>Databases</h6>
-                                <div class="clearfix"> </div>
-                                <p>SQL Server, T-SQL, SSMS, PostgreSQL</p>
-                            </div>
-                            <div class="about-info-w3-agileits mid-bar-agileits-w3layouts">
-                                <h6>Testing & Tools</h6>
-                                <div class="clearfix"> </div>
-                                <p>TDD, Unit Testing (XUnit, NUnit), E2E Testing (Selenium), Git, NuGet, UML, MagicDraw,
-                                    HangFire, RabbitMQ, MassTransit</p>
-                            </div>
-                            <div class="about-info-w3-agileits mid-bar-agileits-w3layouts">
-                                <h6>Familiar With</h6>
-                                <div class="clearfix"> </div>
-                                <p>HTML, CSS, JavaScript, Angular, TypeScript, Playwright</p>
-                            </div>
-                            <div class="pos-grid-agileinfo">
-                                <span class="fa fa-line-chart" aria-hidden="true"></span>
-                                <h5>Skills</h5>
-                            </div>
-                        </div>
+                    
+                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight">
+                        Hi, I'm <span class="text-gradient">Mohsen</span>
+                        <br>
+                        <span class="text-3xl sm:text-4xl lg:text-5xl text-gray-400 font-light typing-cursor" id="typing-text"></span>
+                    </h1>
+                    
+                    <p class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        Senior Software Engineer with <span class="text-orange font-semibold">8+ years</span> of experience designing scalable .NET systems, microservices, and distributed architectures. Passionate about clean code, system observability, and mentoring developers.
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+                        <a href="#contact" class="px-8 py-4 rounded-xl bg-gradient-to-r from-orange to-green text-white font-semibold hover:shadow-lg hover:shadow-orange/25 transition-all transform hover:-translate-y-1">
+                            Get In Touch
+                        </a>
+                        <a href="#projects" class="px-8 py-4 rounded-xl glass-card text-white font-semibold hover:bg-white/10 transition-all">
+                            View Projects
+                        </a>
                     </div>
-
-                    <div class="tab3">
-                        <div class="col-md-10 about-left-w3layouts">
-                            <div class="about-info-w3-agileits">
-                                <h6>Master of Structural Engineering<span>2017-2020</span></h6>
-                                <div class="clearfix"> </div>
-                                <p>K. N. T. Univesity of Technology, Tehran, Iran</p>
-                                <p>Ranked 1st in the class of 2017, Aerospace Engineering - Structural Engineering Dept.
-                                </p>
-                            </div>
-                            <div class="about-info-w3-agileits mid-bar-agileits-w3layouts">
-                                <h6>Graduate in AeroSpace Engineering<span>2013-2017</span></h6>
-                                <div class="clearfix "> </div>
-                                <p>Urmia University of Technology, Urmia, Iran</p>
-                                <p>Ranked 3rd in the class of 2013, Aerospace Engineering Dept.</p>
-                            </div>
-                            <div class="pos-grid-agileinfo ">
-                                <span class="fa fa-graduation-cap " aria-hidden="true "></span>
-                                <h5>Academic</h5>
-                            </div>
-                        </div>
-                        <div class="col-md-10 about-left-w3layouts ">
-                            <div class="about-info-w3-agileits">
-                                <h6>Programming in C#<span>Spring 2018</span></h6>
-                                <div class="clearfix"> </div>
-                                <p>Sematec co., Tehtan, Iran</p>
-                                <p>Score: 95/100</p>
-                                <div class="download-botton ">
-                                    <a href="images/c Sharp Certificate.pdf"
-                                        download="Mohsen Koorani Maskan CSharp Certificate">Download Certificate</a>
-                                </div>
-                            </div>
-                            <div class="about-info-w3-agileits mid-bar-agileits-w3layouts">
-                                <h6>Android Applocation Development<span>Summer 2018</span></h6>
-                                <div class="clearfix"> </div>
-                                <p>IEEE Branch of K. N. T. University of Technology, Tehran, Iran</p>
-                                <div class="download-botton ">
-                                    <a href="images/android Certificate.pdf"
-                                        download="Mohsen Koorani Maskan Android Certificate">Download Certificate</a>
-                                </div>
-                            </div>
-                            <div class="pos-grid-agileinfo ">
-                                <span class="fa fa-graduation-cap " aria-hidden="true "></span>
-                                <h5>Certificate</h5>
-                            </div>
-                        </div>
+                    
+                    <div class="flex gap-6 justify-center lg:justify-start pt-4">
+                        <a href="https://linkedin.com/in/ThisIsMohsenKM" target="_blank" class="text-gray-400 hover:text-orange transition-colors text-2xl">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://github.com/KevinMKM" target="_blank" class="text-gray-400 hover:text-orange transition-colors text-2xl">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="mailto:MKM.Koorani@outlook.com" class="text-gray-400 hover:text-orange transition-colors text-2xl">
+                            <i class="fas fa-envelope"></i>
+                        </a>
                     </div>
-
-                    <div class="tab4 ">
-                        <div class="col-md-10 about-left-w3layouts ">
-                            <div class="about-info-w3-agileits">
-                                <h6>Back-End Team Lead | IranAirtour Airlines<span>June 2023 – Present</span></h6>
-                                <div class="clearfix "> </div>
-                                <span>I'm honored to work as a team lead in R&D department of IranAirtour Airlines
-                                    .</span>
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary button-margin-top" data-toggle="modal"
-                                    data-target="#exampleModalLong0">
-                                    Tasks and achievements
-                                </button>
-
-                                <!-- tasks and achievements Modal -->
-                                <div class="modal fade" id="exampleModalLong0" tabindex="-1" role="dialog"
-                                    aria-labelledby="exampleModalLongTitle0" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLongTitle0">Tasks and
-                                                    achievements</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p> -Led a team in designing, developing, and maintaining 7 coreservices
-                                                    of Iran Airtour Airlines, ensuring scalability and performanceto
-                                                    support critical airline operations.</p>
-                                                <p> -Improved team performance through effective leadership,
-                                                    knowledgesharing meetings, code reviews, and process optimization,
-                                                    resultingin faster delivery and higher-quality outputs..</p>
-                                                <p> -Improved system performance by 30% through code
-                                                    optimization,refactoring, and implementing best practices in .NET,
-                                                    EntityFramework, and microservices architecture.</p>
-                                                <p> -Managed the end-to-end development lifecycle, including
-                                                    codereviews,
-                                                    task prioritization, and mentoring team members to ensureadherence
-                                                    to best practices and coding standards.</p>
-                                                <p> -Spearheaded the enhancement of existing services,
-                                                    implementingperformance optimizations and modern architectural
-                                                    patterns tomeet evolving business needs.</p>
-                                                <p> -Collaborated with the product team to define requirements, set
-                                                    project milestones, and deliver solutions aligned with business
-                                                    goals.</p>
-                                                <p> -Acted as a technical advisor, resolving complex challenges
-                                                    andproviding guidance on system design, architecture,
-                                                    andtroubleshooting.</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary"
-                                                    data-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                </div>
+                
+                <!-- Interactive 3D Code Sphere -->
+                <div class="relative hidden lg:block">
+                    <div class="relative w-full h-[500px]" id="code-sphere">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-64 h-64 rounded-full bg-gradient-to-br from-orange/20 to-green/20 blur-3xl animate-pulse-slow"></div>
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="glass-card rounded-2xl p-8 max-w-sm transform hover:scale-105 transition-transform duration-500">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
                                 </div>
-                                <div class="about-info-w3-agileits  mid-bar-agileits-w3layouts"">
-                                    <h6>Back-End Developer<span>2018 - 2023</span></h6>
-                                    <div class="clearfix "> </div>
-                                    <span>I'm honored to work as a part of such an awesome team from all over
-                                        Iran.</span>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary button-margin-top" data-toggle="modal"
-                                        data-target="#exampleModalLong">
-                                        Tasks and achievements
-                                    </button>
-
-                                    <!-- tasks and achievements Modal -->
-                                    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog"
-                                        aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLongTitle">Tasks and
-                                                        achievements</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p> -Completing more than 500 successful issues including research
-                                                        and development of new features, finding and fixing bugs (based
-                                                        on Gitlab VCS).</p>
-                                                    <p> -Design and development of a framework to produce various
-                                                        reports in StimulSoft.</p>
-                                                    <p> -Design and development of various reports for human resource
-                                                        management applications. (Logics and corresponding output in
-                                                        StimulSoft).</p>
-                                                    <p> -Design and development of a windows application to extract data
-                                                        from time attendance devices (different types of devices) and
-                                                        upload into the company's product database.</p>
-                                                    <p> -Improve company's old designs and development of company
-                                                        products.</p>
-                                                    <p> -Use SQL file manager concepts to improve file storage of all
-                                                        company products.</p>
-                                                    <p> -Management of servers and databases of the company's products.
-                                                    </p>
-                                                    <p> -Design and development of a framework to using Hangfire in the
-                                                        company's products.</p>
-                                                    <p> -Designing and developing the wizard and widget concepts in UML
-                                                        models and related engines.</p>
-                                                    <p> -Create and improve UML models of company's products by Magic
-                                                        Draw.</p>
-                                                    <p> -Create documentation of the company's codes and products in
-                                                        Microsoft Azure.</p>
-                                                    <p> -Write e2e tests with selenium framework and unit tests for
-                                                        different parts of the company's products.</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-primary"
-                                                        data-dismiss="modal">Close</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="about-info-w3-agileits  mid-bar-agileits-w3layouts">
-                                    <h6>Freelance<span>2014 – 2018</span></h6>
-                                    <div class="clearfix "> </div>
-                                    <span>Aerospace and IT Projects.</span><br>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary button-margin-top" data-toggle="modal"
-                                        data-target="#exampleModalLong1">
-                                        Tasks and achievements
-                                    </button>
-
-                                    <!-- tasks and achievements Modal -->
-                                    <div class="modal fade" id="exampleModalLong1" tabindex="-1" role="dialog"
-                                        aria-labelledby="exampleModalLongTitle1" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLongTitle1">Tasks and
-                                                        achievements</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p> -Over 200 projects in Aerospace Engineering field (Software and
-                                                        Coding), Web Designing (HTML and CSS) and university C#
-                                                        Projects.</p>
-                                                    <p> -Holding more than 10 software and programming courses (C#
-                                                        (Fundamentals, Windows Form), Python, MATLAB, Maple, Fortran,
-                                                        Abaqus UDF, Catia, Abaqus, Ansys, Fluent, Comsol Multiphysics).
-                                                    </p>
-                                                    <p> -Translate academic and scientific papers (English to Persian).
-                                                    </p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-primary"
-                                                        data-dismiss="modal">Close</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="about-info-w3-agileits  mid-bar-agileits-w3layouts">
-                                    <h6>Aria Sabokbal<span>2014 – 2017</span></h6>
-                                    <div class="clearfix "> </div>
-                                    <span>I'm honored to work as designer and after 2 years as the head of design
-                                        department.</span>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary button-margin-top" data-toggle="modal"
-                                        data-target="#exampleModalLong2">
-                                        Tasks and achievements
-                                    </button>
-
-                                    <!-- tasks and achievements Modal -->
-                                    <div class="modal fade" id="exampleModalLong2" tabindex="-1" role="dialog"
-                                        aria-labelledby="exampleModalLongTitle2" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLongTitle2">Tasks and
-                                                        achievements</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p> -Scientific design and production of various parts of light
-                                                        aircraft (2 to 8 people).</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-primary"
-                                                        data-dismiss="modal">Close</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="pos-grid-agileinfo ">
-                                    <span class="fa fa-shield " aria-hidden="true "></span>
-                                    <h5>Experience</h5>
-                                </div>
+                                <pre class="font-mono text-sm text-gray-300 overflow-hidden"><code><span class="text-orange">public class</span> <span class="text-green">Architect</span> {
+  <span class="text-orange">private</span> <span class="text-green">var</span> experience = <span class="text-orange">"8+ years"</span>;
+  <span class="text-orange">private</span> <span class="text-green">var</span> passion = <span class="text-orange">"∞"</span>;
+  
+  <span class="text-green">public void</span> <span class="text-orange">Build</span>() {
+    <span class="text-gray-500">// Scalable systems</span>
+    <span class="text-gray-500">// Clean architecture</span>
+    <span class="text-gray-500">// Innovation</span>
+  }
+}</code></pre>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="free ">
-        <div class="container ">
-            <h5 class="sub-hdg-agileits">Senior Software Engineer with over 7 years of experience in .NET,
-                Microservices, and Team Leadership. Passionate about building scalable systems and mentoring teams
-                to deliver innovative solutions.</h5>
-            <div class="botton ">
-                <a href="mailto:MKM.Koorani@outlook.com">Hire Me</a>
+        
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 scroll-indicator">
+            <a href="#about" class="text-gray-400 hover:text-orange transition-colors">
+                <i class="fas fa-chevron-down text-2xl"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="py-12 border-y border-white/5 bg-darker/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center group cursor-pointer" onmouseenter="animateCounter(this)">
+                    <div class="text-4xl font-bold text-gradient mb-2 counter" data-target="8">0</div>
+                    <div class="text-gray-400 text-sm uppercase tracking-wider">Years Experience</div>
+                </div>
+                <div class="text-center group cursor-pointer" onmouseenter="animateCounter(this)">
+                    <div class="text-4xl font-bold text-gradient mb-2 counter" data-target="11">0</div>
+                    <div class="text-gray-400 text-sm uppercase tracking-wider">Microservices Migrated</div>
+                </div>
+                <div class="text-center group cursor-pointer" onmouseenter="animateCounter(this)">
+                    <div class="text-4xl font-bold text-gradient mb-2 counter" data-target="500">0</div>
+                    <div class="text-gray-400 text-sm uppercase tracking-wider">Issues Resolved</div>
+                </div>
+                <div class="text-center group cursor-pointer" onmouseenter="animateCounter(this)">
+                    <div class="text-4xl font-bold text-gradient mb-2 counter" data-target="30">0</div>
+                    <div class="text-gray-400 text-sm uppercase tracking-wider">% Performance Gain</div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="copyright ">
-        <div class="container ">
-            <p>&copy; 2023 Mohsen Koorani Maskan. All Rights Reserved | Designed by Mohsen Koorani Maskan </a>
-            </p>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-3 gap-12">
+                <div class="lg:col-span-1">
+                    <h2 class="text-4xl font-bold mb-6 text-gradient">About Me</h2>
+                    <div class="space-y-4 text-gray-400 leading-relaxed">
+                        <p>
+                            Aerospace Engineer turned Software Architect. I bring a unique analytical perspective from my M.Sc. in Aerospace Structural Engineering to software design.
+                        </p>
+                        <p>
+                            Currently leading backend teams at <span class="text-orange">Iran Airtour Airlines</span>, driving innovation in aviation technology through scalable microservices and domain-driven design.
+                        </p>
+                        <div class="pt-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <i class="fas fa-map-marker-alt text-orange"></i>
+                                <span>Karaj, Alborz, Iran</span>
+                            </div>
+                            <div class="flex items-center gap-3 mb-3">
+                                <i class="fas fa-envelope text-orange"></i>
+                                <span>MKM.Koorani@outlook.com</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-phone text-orange"></i>
+                                <span>+98 910 988 3120</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-2">
+                    <h3 class="text-2xl font-bold mb-8">Core Competencies</h3>
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div class="glass-card rounded-xl p-6 group hover:border-orange/50">
+                            <div class="w-12 h-12 rounded-lg bg-orange/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-sitemap text-orange text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">System Architecture</h4>
+                            <p class="text-gray-400 text-sm">Microservices, Clean Architecture, DDD, CQRS, Event Sourcing, Distributed Systems</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6 group hover:border-green/50">
+                            <div class="w-12 h-12 rounded-lg bg-green/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-rocket text-green text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">Performance Optimization</h4>
+                            <p class="text-gray-400 text-sm">Code refactoring, Database query optimization, Caching strategies, Async processing</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6 group hover:border-accent/50">
+                            <div class="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-users text-accent text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">Technical Leadership</h4>
+                            <p class="text-gray-400 text-sm">Team mentoring, Code reviews, Agile Scrum, Technical decision making, R&D innovation</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6 group hover:border-orange/50">
+                            <div class="w-12 h-12 rounded-lg bg-orange/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-shield-alt text-orange text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">DevOps & Quality</h4>
+                            <p class="text-gray-400 text-sm">CI/CD, Docker, TDD, Unit Testing, E2E Testing, ELK Stack, Observability</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <a href="#home " class="scroll " id="toTop " style="display: block; "> <span id="toTopHover " style="opacity: 1; ">
-        </span></a>
-    <script type='text/javascript' src='js/jquery-2.2.3.min.js'></script>
-    <script src="js/jquery.waypoints.min.js "></script>
-    <script src="js/jquery.countup.js "></script>
+    </section>
+
+    <!-- Interactive Skills Constellation -->
+    <section id="skills" class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-orange/5 to-transparent"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 text-gradient">Technical Skills</h2>
+                <p class="text-gray-400">Interactive skill constellation - hover to explore</p>
+            </div>
+
+            <!-- Skill Categories -->
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Backend & Languages -->
+                <div class="glass-card rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-code text-orange"></i>
+                        Languages & Frameworks
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">C#</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">.NET Core</span>
+                        <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">.NET Framework</span>
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">EF Core</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">Dapper</span>
+                        <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">ASP.NET Web API</span>
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">MVC</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">Golang</span>
+                        <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">JavaScript</span>
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">T-SQL</span>
+                    </div>
+                </div>
+
+                <!-- Architecture & Patterns -->
+                <div class="glass-card rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-project-diagram text-green"></i>
+                        Architecture & Patterns
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">Microservices</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">Clean Architecture</span>
+                        <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">Domain-Driven Design</span>
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">CQRS</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">Event Sourcing</span>
+                        <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">Onion Architecture</span>
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">Event-Driven</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">N-Layered</span>
+                        <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">SOLID Principles</span>
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">Design Patterns</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">BDD</span>
+                    </div>
+                </div>
+
+                <!-- Databases & Storage -->
+                <div class="glass-card rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-database text-accent"></i>
+                        Databases & Caching
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">SQL Server</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">PostgreSQL</span>
+                        <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">Redis</span>
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">MongoDB</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">Elasticsearch</span>
+                    </div>
+                </div>
+
+                <!-- Tools & Technologies -->
+                <div class="glass-card rounded-2xl p-8">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fas fa-tools text-orange"></i>
+                        Tools & DevOps
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">Docker</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">RabbitMQ</span>
+                        <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">MassTransit</span>
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">Git</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">HangFire</span>
+                        <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">Serilog</span>
+                        <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">UML</span>
+                        <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">Magic Draw</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing & Methodologies -->
+            <div class="mt-8 glass-card rounded-2xl p-8">
+                <h3 class="text-xl font-bold mb-6 text-center">Testing & Methodologies</h3>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">TDD</span>
+                    <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">xUnit</span>
+                    <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">NUnit</span>
+                    <span class="px-4 py-2 rounded-lg bg-orange/10 border border-orange/30 text-orange text-sm hover:bg-orange/20 transition-colors cursor-default">Selenium</span>
+                    <span class="px-4 py-2 rounded-lg bg-green/10 border border-green/30 text-green text-sm hover:bg-green/20 transition-colors cursor-default">CI/CD</span>
+                    <span class="px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors cursor-default">OWASP</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Timeline -->
+    <section id="experience" class="py-24 relative">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 text-gradient">Professional Journey</h2>
+                <p class="text-gray-400">My career path in software engineering</p>
+            </div>
+
+            <div class="relative">
+                <!-- Timeline Line -->
+                <div class="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 h-full w-1 timeline-line rounded-full"></div>
+
+                <!-- Iran Airtour -->
+                <div class="relative mb-12 md:mb-24">
+                    <div class="md:flex items-center justify-between">
+                        <div class="md:w-5/12 md:text-right mb-4 md:mb-0 md:pr-8">
+                            <div class="glass-card rounded-xl p-6 inline-block text-left md:text-right hover:border-orange/50 transition-colors w-full">
+                                <div class="tl-period">// Jun 2023 – Present</div>
+                                <div class="tl-role">BACK-END TEAM LEAD</div>
+                                <div class="tl-company">Iran Airtour Airlines · Aviation R&D</div>
+                                <button class="tl-toggle magnetic" onclick="toggleAchievements(this)">show_achievements() ▾</button>
+                                <ul class="tl-achievements text-left">
+                                    <li>Led a team of 4+ developers in building and maintaining 7 core airline services with high scalability.</li>
+                                    <li>Migrated 11 microservices and shared framework to .NET 8 with zero downtime.</li>
+                                    <li>Improved system performance by 30% through deep code refactoring and optimized database queries.</li>
+                                    <li>Spearheaded enhancement of legacy services, modernizing codebases and adopting scalable architectural patterns.</li>
+                                    <li>Managed full development lifecycle including backlog grooming, task prioritization, and mentorship.</li>
+                                    <li>Acted as technical advisor, solving high-complexity system issues and providing guidance on architecture.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-orange border-4 border-dark z-10"></div>
+                        
+                        <div class="md:w-5/12 md:pl-8 ml-12 md:ml-0">
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 rounded bg-orange/10 text-orange text-xs">.NET 8</span>
+                                <span class="px-2 py-1 rounded bg-green/10 text-green text-xs">Microservices</span>
+                                <span class="px-2 py-1 rounded bg-accent/10 text-accent text-xs">R&D</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pendar Ideas -->
+                <div class="relative mb-12 md:mb-24">
+                    <div class="md:flex items-center justify-between flex-row-reverse">
+                        <div class="md:w-5/12 md:text-left mb-4 md:mb-0 md:pl-8">
+                            <div class="glass-card rounded-xl p-6 inline-block hover:border-green/50 transition-colors w-full">
+                                <div class="tl-period">// Jun 2018 – Jun 2023</div>
+                                <div class="tl-role">SOFTWARE ENGINEER</div>
+                                <div class="tl-company">Pendar Ideas · HR-Tech</div>
+                                <button class="tl-toggle magnetic" onclick="toggleAchievements(this)">show_achievements() ▾</button>
+                                <ul class="tl-achievements">
+                                    <li>Successfully resolved 500+ issues through research, development of new features, and bug fixes.</li>
+                                    <li>Designed and developed a custom framework for generating dynamic reports in StimulSoft, MS Excel, and web browsers.</li>
+                                    <li>Built a Windows application to extract data from various time attendance devices and integrate into product database.</li>
+                                    <li>Created a debugger tool for the company's low-code/no-code atomic activities, significantly improving development efficiency.</li>
+                                    <li>Produced comprehensive documentation for company codes, products and UML models hosted on Microsoft Azure.</li>
+                                    <li>Championed TDD by writing end-to-end and unit tests using NUnit and Selenium frameworks.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-green border-4 border-dark z-10"></div>
+                        
+                        <div class="md:w-5/12 md:pr-8 text-right ml-12 md:ml-0 md:text-right">
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                <span class="px-2 py-1 rounded bg-orange/10 text-orange text-xs">C#</span>
+                                <span class="px-2 py-1 rounded bg-green/10 text-green text-xs">TDD</span>
+                                <span class="px-2 py-1 rounded bg-accent/10 text-accent text-xs">StimulSoft</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aria Sabokbal -->
+                <div class="relative mb-12 md:mb-24">
+                    <div class="md:flex items-center justify-between">
+                        <div class="md:w-5/12 md:text-right mb-4 md:mb-0 md:pr-8">
+                            <div class="glass-card rounded-xl p-6 inline-block text-left md:text-right hover:border-accent/50 transition-colors w-full">
+                                <div class="tl-period">// 2014 – 2017</div>
+                                <div class="tl-role">HEAD OF DESIGN DEPARTMENT</div>
+                                <div class="tl-company">Aria Sabokbal · Promoted from Designer</div>
+                                <button class="tl-toggle magnetic" onclick="toggleAchievements(this)">show_achievements() ▾</button>
+                                <ul class="tl-achievements text-left">
+                                    <li>Scientific design and production of various parts of light aircraft (2 to 8 passengers).</li>
+                                    <li>Started as a designer and promoted to Head of Design Department within 2 years.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-accent border-4 border-dark z-10"></div>
+                        
+                        <div class="md:w-5/12 md:pl-8 ml-12 md:ml-0">
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-2 py-1 rounded bg-accent/10 text-accent text-xs">Aerospace</span>
+                                <span class="px-2 py-1 rounded bg-orange/10 text-orange text-xs">CAD</span>
+                                <span class="px-2 py-1 rounded bg-green/10 text-green text-xs">Leadership</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Freelance -->
+                <div class="relative">
+                    <div class="md:flex items-center justify-between flex-row-reverse">
+                        <div class="md:w-5/12 md:text-left mb-4 md:mb-0 md:pl-8">
+                            <div class="glass-card rounded-xl p-6 inline-block hover:border-orange/50 transition-colors w-full">
+                                <div class="tl-period">// 2014 – 2018</div>
+                                <div class="tl-role">FREELANCE DEVELOPER</div>
+                                <div class="tl-company">Self Employed</div>
+                                <button class="tl-toggle magnetic" onclick="toggleAchievements(this)">show_achievements() ▾</button>
+                                <ul class="tl-achievements">
+                                    <li>Delivered 200+ projects including web applications and desktop software solutions.</li>
+                                    <li>Developed custom C# applications for various clients across different industries.</li>
+                                    <li>Created responsive websites and Windows Forms applications.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-orange border-4 border-dark z-10"></div>
+                        
+                        <div class="md:w-5/12 md:pr-8 text-right ml-12 md:ml-0 md:text-right">
+                            <div class="flex flex-wrap gap-2 justify-end">
+                                <span class="px-2 py-1 rounded bg-orange/10 text-orange text-xs">WinForms</span>
+                                <span class="px-2 py-1 rounded bg-green/10 text-green text-xs">WPF</span>
+                                <span class="px-2 py-1 rounded bg-accent/10 text-accent text-xs">Web</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Projects -->
+    <section id="projects" class="py-24 relative bg-darker/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 text-gradient">Featured Projects</h2>
+                <p class="text-gray-400">Key achievements and technical contributions</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="glass-card rounded-2xl overflow-hidden group hover:border-orange/50 transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-orange/20 to-green/20 flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-plane text-6xl text-orange/30 group-hover:scale-110 transition-transform duration-500"></i>
+                        <div class="absolute inset-0 bg-gradient-to-t from-card to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 group-hover:text-orange transition-colors">Airline Microservices Migration</h3>
+                        <p class="text-gray-400 text-sm mb-4">Led migration of 11 microservices and shared framework to .NET 8 with zero downtime across production environments.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 rounded bg-orange/10 text-orange text-xs">.NET 8</span>
+                            <span class="px-2 py-1 rounded bg-green/10 text-green text-xs">Microservices</span>
+                            <span class="px-2 py-1 rounded bg-accent/10 text-accent text-xs">Zero Downtime</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="glass-card rounded-2xl overflow-hidden group hover:border-green/50 transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-green/20 to-accent/20 flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-chart-bar text-6xl text-green/30 group-hover:scale-110 transition-transform duration-500"></i>
+                        <div class="absolute inset-0 bg-gradient-to-t from-card to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 group-hover:text-green transition-colors">Dynamic Reporting Framework</h3>
+                        <p class="text-gray-400 text-sm mb-4">Custom framework for generating dynamic reports in StimulSoft, MS Excel, and web browsers with complex HR analytics.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 rounded bg-orange/10 text-orange text-xs">StimulSoft</span>
+                            <span class="px-2 py-1 rounded bg-green/10 text-green text-xs">Excel</span>
+                            <span class="px-2 py-1 rounded bg-accent/10 text-accent text-xs">Data Viz</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="glass-card rounded-2xl overflow-hidden group hover:border-accent/50 transition-all duration-300">
+                    <div class="h-48 bg-gradient-to-br from-accent/20 to-orange/20 flex items-center justify-center relative overflow-hidden">
+                        <i class="fas fa-bug text-6xl text-accent/30 group-hover:scale-110 transition-transform duration-500"></i>
+                        <div class="absolute inset-0 bg-gradient-to-t from-card to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 group-hover:text-accent transition-colors">LCNC Debugger Tool</h3>
+                        <p class="text-gray-400 text-sm mb-4">Created debugger tool for low-code/no-code atomic activities, significantly improving development efficiency and troubleshooting.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 rounded bg-orange/10 text-orange text-xs">Debugging</span>
+                            <span class="px-2 py-1 rounded bg-green/10 text-green text-xs">Tools</span>
+                            <span class="px-2 py-1 rounded bg-accent/10 text-accent text-xs">LCNC</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education & Certs -->
+    <section class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h2 class="text-3xl font-bold mb-8 text-gradient">Education</h2>
+                    <div class="space-y-6">
+                        <div class="glass-card rounded-xl p-6 hover:border-orange/30 transition-colors">
+                            <div class="flex items-start justify-between mb-2">
+                                <div>
+                                    <h3 class="font-bold text-lg">M.Sc. Aerospace Structural Engineering</h3>
+                                    <p class="text-orange">K.N. Toosi University of Technology</p>
+                                </div>
+                                <span class="text-sm text-gray-500 font-mono">2017-2020</span>
+                            </div>
+                            <p class="text-sm text-gray-400">Combining engineering rigor with software architecture principles</p>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-6 hover:border-green/30 transition-colors">
+                            <div class="flex items-start justify-between mb-2">
+                                <div>
+                                    <h3 class="font-bold text-lg">B.Sc. Aerospace Engineering</h3>
+                                    <p class="text-green">Urmia University of Technology</p>
+                                </div>
+                                <span class="text-sm text-gray-500 font-mono">2013-2017</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-3xl font-bold mb-8 text-gradient">Current Learning</h2>
+                    <div class="space-y-4">
+                        <div class="glass-card rounded-xl p-4 flex items-center gap-4 hover:border-orange/30 transition-colors">
+                            <div class="w-12 h-12 rounded-lg bg-orange/10 flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-orange text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold">OWASP Security</h4>
+                                <p class="text-sm text-gray-400 mt-1">Learning security best practices and vulnerability assessment</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-orange/10 text-orange text-xs border border-orange/30">In Progress</span>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-4 flex items-center gap-4 hover:border-green/30 transition-colors">
+                            <div class="w-12 h-12 rounded-lg bg-green/10 flex items-center justify-center">
+                                <i class="fab fa-golang text-green text-2xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold">Golang</h4>
+                                <p class="text-sm text-gray-400 mt-1">Expanding backend language expertise</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-green/10 text-green text-xs border border-green/30">Learning</span>
+                        </div>
+                        
+                        <div class="glass-card rounded-xl p-4 flex items-center gap-4 hover:border-accent/30 transition-colors">
+                            <div class="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
+                                <i class="fas fa-language text-accent text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold">English B2 Level</h4>
+                                <p class="text-sm text-gray-400 mt-1">Professional working proficiency</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs border border-accent/30">In Progress</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 glass-card rounded-xl p-6">
+                        <h3 class="font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-chalkboard-teacher text-orange"></i>
+                            Teaching Experience
+                        </h3>
+                        <p class="text-sm text-gray-400 mb-2">2020 - 2021</p>
+                        <ul class="text-sm space-y-2 text-gray-300">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-orange text-xs"></i>
+                                C# Fundamentals
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-orange text-xs"></i>
+                                Windows Forms Development
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-orange text-xs"></i>
+                                WPF Applications
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 relative bg-darker/50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold mb-4 text-gradient">Let's Work Together</h2>
+            <p class="text-gray-400 mb-12">Open to international opportunities and relocation</p>
+            
+            <div class="grid sm:grid-cols-3 gap-6 mb-12">
+                <a href="mailto:MKM.Koorani@outlook.com" class="glass-card rounded-xl p-6 hover:border-orange/50 transition-all group">
+                    <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-orange/10 flex items-center justify-center group-hover:bg-orange/20 transition-colors">
+                        <i class="fas fa-envelope text-orange text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold mb-1">Email</h3>
+                    <p class="text-sm text-gray-400">MKM.Koorani@outlook.com</p>
+                </a>
+                
+                <a href="https://linkedin.com/in/ThisIsMohsenKM" target="_blank" class="glass-card rounded-xl p-6 hover:border-green/50 transition-all group">
+                    <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-green/10 flex items-center justify-center group-hover:bg-green/20 transition-colors">
+                        <i class="fab fa-linkedin text-green text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold mb-1">LinkedIn</h3>
+                    <p class="text-sm text-gray-400">ThisIsMohsenKM</p>
+                </a>
+                
+                <div class="glass-card rounded-xl p-6 hover:border-accent/50 transition-all group">
+                    <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                        <i class="fas fa-phone text-accent text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold mb-1">Phone</h3>
+                    <p class="text-sm text-gray-400">+98 910 988 3120</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-8 inline-block">
+                <p class="text-gray-400 mb-4">Download my complete resume</p>
+                <a href="images/CV.pdf" download="Mohsen Koorani Maskan CV" download class="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-orange to-green text-white font-bold hover:shadow-lg hover:shadow-orange/25 transition-all transform hover:-translate-y-1">
+                    <i class="fas fa-download text-xl"></i>
+                    Download CV (PDF)
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/5 text-center text-gray-500 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p>&copy; 2024 Mohsen Koorani Maskan. All rights reserved.</p>
+            <p class="mt-2">Built with passion for clean code and scalable architecture</p>
+        </div>
+    </footer>
+
     <script>
-        $('.counter').countUp();
-    </script>
-    <script type="text/javascript " src="js/move-top.js "></script>
-    <script type="text/javascript " src="js/easing.js "></script>
-    <script type="text/javascript ">
-        jQuery(document).ready(function($) {
-            $(".scroll ").click(function(event) {
-                event.preventDefault();
-                $('html,body').animate({
-                    scrollTop: $(this.hash).offset().top
-                }, 1000);
+        // Three.js Dense Particle Network with Orange/Green colors
+        let scene, camera, renderer, particles, particlePositions, particleVelocities;
+        let mouseX = 0, mouseY = 0;
+        let windowHalfX = window.innerWidth / 2;
+        let windowHalfY = window.innerHeight / 2;
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0a0a0f, 0.001);
+            
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.z = 300;
+            
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Create particles
+            const particleCount = 1000;
+            const geometry = new THREE.BufferGeometry();
+            particlePositions = new Float32Array(particleCount * 3);
+            particleVelocities = [];
+            
+            for (let i = 0; i < particleCount; i++) {
+                particlePositions[i * 3] = (Math.random() - 0.5) * 1000;
+                particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 1000;
+                particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 1000;
+                
+                particleVelocities.push({
+                    x: (Math.random() - 0.5) * 0.5,
+                    y: (Math.random() - 0.5) * 0.5,
+                    z: (Math.random() - 0.5) * 0.5
+                });
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+            
+            const material = new THREE.PointsMaterial({
+                color: 0x00D4FF,
+                size: 1.5,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            // Create connection lines
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0x7B61FF,
+                transparent: true,
+                opacity: 0.2
+            });
+            
+            document.addEventListener('mousemove', onDocumentMouseMove);
+            window.addEventListener('resize', onWindowResize);
+            
+            animate();
+        }
+
+        function onDocumentMouseMove(event) {
+            mouseX = (event.clientX - windowHalfX) * 0.5;
+            mouseY = (event.clientY - windowHalfY) * 0.5;
+        }
+
+        function onWindowResize() {
+            windowHalfX = window.innerWidth / 2;
+            windowHalfY = window.innerHeight / 2;
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const positions = particles.geometry.attributes.position.array;
+            
+            for (let i = 0; i < positions.length / 3; i++) {
+                positions[i * 3] += particleVelocities[i].x;
+                positions[i * 3 + 1] += particleVelocities[i].y;
+                positions[i * 3 + 2] += particleVelocities[i].z;
+                
+                // Mouse interaction
+                const dx = positions[i * 3] - mouseX * 0.5;
+                const dy = positions[i * 3 + 1] + mouseY * 0.5;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < 150) {
+                    positions[i * 3] += dx * 0.02;
+                    positions[i * 3 + 1] += dy * 0.02;
+                }
+                
+                // Boundary check
+                if (Math.abs(positions[i * 3]) > 500) particleVelocities[i].x *= -1;
+                if (Math.abs(positions[i * 3 + 1]) > 500) particleVelocities[i].y *= -1;
+                if (Math.abs(positions[i * 3 + 2]) > 500) particleVelocities[i].z *= -1;
+            }
+            
+            particles.geometry.attributes.position.needsUpdate = true;
+            particles.rotation.y += 0.002;
+            
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+            
+            renderer.render(scene, camera);
+        }
+
+        // Typing Effect
+        const roles = ['Senior Software Engineer', 'System Architect', 'Team Lead', 'Microservices Expert'];
+        let roleIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingElement = document.getElementById('typing-text');
+
+        function typeText() {
+            const currentRole = roles[roleIndex];
+            
+            if (isDeleting) {
+                typingElement.textContent = currentRole.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typingElement.textContent = currentRole.substring(0, charIndex + 1);
+                charIndex++;
+            }
+            
+            let typeSpeed = isDeleting ? 50 : 100;
+            
+            if (!isDeleting && charIndex === currentRole.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                typeSpeed = 500;
+            }
+            
+            setTimeout(typeText, typeSpeed);
+        }
+
+        // Counter Animation
+        function animateCounter(element) {
+            const counter = element.querySelector('.counter');
+            const target = parseInt(counter.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const updateCounter = () => {
+                current += step;
+                if (current < target) {
+                    counter.textContent = Math.floor(current);
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    counter.textContent = target + (target === 30 ? '%' : '+');
+                }
+            };
+            
+            updateCounter();
+        }
+
+        // Timeline Toggle Function
+        function toggleAchievements(button) {
+            const achievements = button.nextElementSibling;
+            const isExpanded = achievements.classList.contains('show');
+            
+            if (isExpanded) {
+                achievements.classList.remove('show');
+                button.textContent = 'show_achievements() ▾';
+            } else {
+                achievements.classList.add('show');
+                button.textContent = 'hide_achievements() ▴';
+            }
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initThreeJS();
+            typeText();
+            
+            // Animate counters on load
+            document.querySelectorAll('.counter').forEach(counter => {
+                animateCounter(counter.parentElement);
             });
         });
-    </script>
-    <script src="js/easy-responsive-tabs.js "></script>
-    <script>
-        $(document).ready(function () {
-            $('#horizontalTab').easyResponsiveTabs({
-                type: 'default', //Types: default, vertical, accordion           
-                width: 'auto', //auto or any width like 600px
-                fit: true, // 100% fit in a container
-                closed: 'accordion', // Start closed if in accordion view
-                activate: function (event) { // Callback function if tab is switched
-                    var $tab = $(this);
-                    var $info = $('#tabInfo');
-                    var $name = $('span', $info);
-                    $name.text($tab.text());
-                    $info.show();
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('mobile-menu').classList.add('hidden');
                 }
             });
-            $('#verticalTab').easyResponsiveTabs({
-                type: 'vertical',
-                width: 'auto',
-                fit: true
-            });
         });
     </script>
-    <script type="text/javascript ">
-        $(document).ready(function() {
-            /*
-            	var defaults = {
-            	containerID: 'toTop', // fading element id
-            	containerHoverID: 'toTopHover', // fading element hover id
-            	scrollSpeed: 1200,
-            	easingType: 'linear' 
-            	};
-            */
-
-            $().UItoTop({
-                easingType: 'easeOutQuart'
-            });
-
-        });
-    </script>
-    <script src="js/bootstrap.js "></script>
 </body>
-
 </html>
